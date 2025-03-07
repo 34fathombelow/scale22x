@@ -23,6 +23,6 @@ spec:
     namespace: '*'
     server: https://kubernetes.default.svc
   sourceRepos:
-  - https://github.com/34fathombelow/scale22x
+  - https://github.com/34fathombelow/scale22x.git
   - https://charts.jetstack.io
   - https://github.com/argoproj/argocd-example-apps.git
