@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-appsets
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  source:
+    path: appsets
+    repoURL: https://github.com/34fathombelow/scale22x.git
+    targetRevision: HEAD
+  sources: []
+  project: scale
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

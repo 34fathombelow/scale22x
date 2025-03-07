@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-apps-bootstrap
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: argocd
+    name: in-cluster
+  source:
+    path: apps
+    repoURL: https://github.com/34fathombelow/scale22x.git
+    targetRevision: HEAD
+  sources: []
+  project: scale
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,42 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+
+resources:
+- overlays/ns.yaml
+- overlays/projects.yaml
+- https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/release-2.14/manifests/install.yaml
+
+images:
+- name: quay.io/argoproj/argocd
+  newTag: v2.14.4
+
+replicas:
+- name: argocd-repo-server
+  count: 4
+
+patches:
+  - target:
+      kind: StatefulSet
+      name: argocd-application-controller
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: "--status-processors=40"
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: "--operation-processors=20"
+  - patch: |
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: argocd-application-controller
+      spec:
+        template:
+          spec:
+            containers:
+              - name: argocd-application-controller
+                env:
+                  - name: ARGOCD_APPLICATION_CONTROLLER_SELF_HEAL_TIMEOUT_SECONDS
+                    value: "300"
+                    valueFrom: null

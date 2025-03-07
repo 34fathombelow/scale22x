@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - name: prod
+        namespace: guestbook-dev
+      - name: dev
+        namespace: guestbook-prod
+    selector:
+      matchExpressions:
+        - key: name
+          operator: In
+          values:
+            - prod
+            - dev
+  template:
+    metadata:
+      name: 'guestbook-{{name}}'
+    spec:
+      project: 'scale'
+      source:
+        repoURL: 'https://github.com/argoproj/argocd-example-apps.git'
+        path: guestbook
+      destination:
+        name: in-cluster
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true 
